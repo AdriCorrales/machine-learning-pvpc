@@ -33,8 +33,10 @@ def get_input(fechas):
     return json_data 
 
 #Metodo al que le pasamos una fecha, y nos devuelve un timestamp
-def fecha_parse(fecha):
-    fecha_str = fecha + " 00:00:00"
+def fecha_parse(fecha, hora):
+    hora_str_split = hora.split(":")
+    fecha_str = fecha + " " + hora_str_split[0] + ":00:00"
+    print(fecha_str)
     fecha = datetime.strptime(fecha_str, "%Y-%m-%d %H:%M:%S")
     res = fecha.timestamp()
     return res
@@ -43,16 +45,16 @@ def normalize(val):
     norm_val = (val * std) + mean
     return norm_val
 
-def get_real_value_hour(fecha):
-    fecha_timestamp = fecha_parse(fecha)
+def get_real_value_hour(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
     row_value = df.loc[df['date'] == fecha_timestamp]
     row_value_index = row_value.index[0]
     value = df.loc[row_value_index, "price"]
     value = normalize(value)
     return value
 
-def get_real_values_day(fecha):
-    fecha_timestamp = fecha_parse(fecha)
+def get_real_values_day(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
     row_value = df.loc[df['date'] == fecha_timestamp]
     row_value_index = row_value.index[0]
     fechas = df.iloc[row_value_index - 24:row_value_index]
@@ -64,8 +66,8 @@ def get_real_values_day(fecha):
 
     return res
 
-def get_hour_data(fecha):
-    fecha_timestamp = fecha_parse(fecha)
+def get_hour_data(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
     fecha_find = df.loc[df['date'] == fecha_timestamp]
     fecha_find_index = fecha_find.index[0]
     fechas_input = df.iloc[fecha_find_index - 3:fecha_find_index]
@@ -74,8 +76,8 @@ def get_hour_data(fecha):
     # Tengo que obtener la predicción 
     return response
 
-def get_day_data(fecha):
-    fecha_timestamp = fecha_parse(fecha)
+def get_day_data(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
     fecha_find = df.loc[df['date'] == fecha_timestamp]
     fecha_find_index = fecha_find.index[0]
     fechas_input = df.iloc[(fecha_find_index - 24 * 7):fecha_find_index]

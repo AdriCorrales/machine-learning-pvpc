@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Hora{% endblock %}
 
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/screen.css') }}">
+{% endblock %}
+
 {% block content %}
-<label class="form-label">Fecha: </label>
-<input type="text" class="form-control col-xs-3" id="fecha" value="{{fecha}}" readonly></br>
-<div class="table-responsive-sm">
+<div class="data">
+    <label class="form-label">Fecha: </label>
+    <input type="text" class="form-control col-xs-3" id="fechashow" value="{{fechashow}}" readonly></br>
+
+    <div class="table-responsive-sm">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -24,4 +31,5 @@
         </tbody>
     </table>
   </div>
+</div>
 {% endblock %}
