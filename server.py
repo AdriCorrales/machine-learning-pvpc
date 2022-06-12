@@ -68,7 +68,6 @@ def get_hour_data(fecha):
     fecha_timestamp = fecha_parse(fecha)
     fecha_find = df.loc[df['date'] == fecha_timestamp]
     fecha_find_index = fecha_find.index[0]
-    print(fecha_find_index)
     fechas_input = df.iloc[fecha_find_index - 3:fecha_find_index]
     #Montamos la entrada
     response = get_input(fechas_input) 
