@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Hora{% endblock %}
+
+{% block content %}
+<label class="form-label">Predicción: </label>
+<input type="text" class="form-control col-xs-3" id="fecha" value="{{predvalue}}" readonly></br>
+<label class="form-label">Valor Real: </label>
+<input type="text" class="form-control col-xs-3" id="realvalue" value="{{realvalue}}" readonly></br>
+{% endblock %}
