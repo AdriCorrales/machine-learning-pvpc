@@ -33,9 +33,13 @@ def get_day():
     realvalues = server.get_real_values_day(fecha)
     pred = requests.post('http://localhost:8601/v1/models/prueba_model/versions/2:predict', json=resp)
     pred_json = pred.json().get("predictions")
-    predvalue =server.normalize(pred_json[0][0])
-    print(type(realvalues))
-    return render_template("dia.html", realvalues = list(realvalues), predvalue = predvalue, error = "Fecha incorrecta", len = len(list(realvalues)))
+    
+    predvalues = []
+    for i in range(0, len(pred_json[0])):
+        predvalue = server.normalize(pred_json[0][i])
+        predvalues.append(predvalue)
+    
+    return render_template("dia.html", realvalues = list(realvalues), predvalues = list(predvalues), error = "Fecha incorrecta", len = len(list(realvalues)))
 
 @app.route('/week', methods=['GET','POST'])
 def get_week():
