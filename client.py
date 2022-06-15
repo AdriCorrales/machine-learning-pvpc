@@ -39,6 +39,7 @@ def get_day():
     
     predvalues = []
     for i in range(0, len(pred_json[0])):
+        
         predvalue = server.normalize(pred_json[0][i])
         predvalues.append(predvalue)
     

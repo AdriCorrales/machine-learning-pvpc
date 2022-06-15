@@ -1,15 +1,17 @@
-from multiprocessing.sharedctypes import Value
 import pandas as pd
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import json
 
-app = Flask(__name__)
-df = pd.read_csv("data/csvdata.csv", sep = ",")
-
+df = pd.read_csv("data/csvdata2022.csv", sep = ",")
 # Constantes obtenidas del entrenamiento
-mean = 72.00158769425943
-std = 61.382440401330285
+mean = 219.2320209723546
+std = 73.79958332698291
+
+#mean = 72.00158769425943
+#std = 61.382440401330285
+#mean = 141.11900799825293
+#std = 86.89524236480287
 
 def get_input(fechas):
     resp = []
@@ -36,7 +38,6 @@ def get_input(fechas):
 def fecha_parse(fecha, hora):
     hora_str_split = hora.split(":")
     fecha_str = fecha + " " + hora_str_split[0] + ":00:00"
-    print(fecha_str)
     fecha = datetime.strptime(fecha_str, "%Y-%m-%d %H:%M:%S")
     res = fecha.timestamp()
     return res
@@ -57,7 +58,21 @@ def get_real_values_day(fecha, hora):
     fecha_timestamp = fecha_parse(fecha, hora)
     row_value = df.loc[df['date'] == fecha_timestamp]
     row_value_index = row_value.index[0]
-    fechas = df.iloc[row_value_index - 24:row_value_index]
+    print(row_value_index)
+    fechas = df.iloc[row_value_index:(row_value_index + 24)]
+    res = []
+
+    for row in fechas.index:
+        value = df.loc[row, "price"]
+        res.append(normalize(value))
+
+    return res
+
+def get_real_values_week(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
+    row_value = df.loc[df['date'] == fecha_timestamp]
+    row_value_index = row_value.index[0]
+    fechas = df.iloc[row_value_index:(row_value_index + 24 * 7)]
     res = []
 
     for row in fechas.index:
@@ -87,7 +102,7 @@ def get_day_data(fecha, hora):
     # Tengo que obtener la predicción 
     return response
 
-def get_week_day():
+def get_week_data():
     fecha = request.json['fecha']
     fecha_timestamp = fecha_parse(fecha)
     fecha_find = df.loc[df['date'] == fecha_timestamp]
@@ -98,6 +113,3 @@ def get_week_day():
     response = get_input(fechas_input) 
     # Tengo que obtener la predicción 
     return response
-
-if __name__ == "__main__":
-    app.run(port=5000)
