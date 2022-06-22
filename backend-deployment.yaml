@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: backend
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: pod-backend
+  template:
+    metadata:
+      labels:
+        name: pod-backend
+      name: backend
+    spec:
+      containers:
+      - image: adricorrales/pvpc:backend
+        name: backend
+        ports:
+        - containerPort: 5001
+        imagePullPolicy: IfNotPresent

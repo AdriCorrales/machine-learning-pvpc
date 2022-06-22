@@ -8,10 +8,6 @@ app = Flask(__name__)
 
 df = pd.read_csv("data/csvdata.csv", sep = ",")
 
-# Constantes obtenidas del entrenamiento
-mean = 72.00158769425943
-std = 61.382440401330285
-
 @app.route('/')
 def init():
     return render_template("inicio.html")
@@ -22,7 +18,7 @@ def get_hour():
     hora = request.form.get("hora")
     resp = server.get_hour_data(fecha, hora)
     realvalue = server.get_real_value_hour(fecha, hora)
-    pred = requests.post('http://localhost:8601/v1/models/prueba_model/versions/1:predict', json=resp)
+    pred = requests.post('http://pvpc-serving:8501/v1/models/modelhour/versions/1:predict', json=resp)
     pred_json = pred.json().get("predictions")
     predvalue =server.normalize(pred_json[0][0])
     fechashow = fecha + " " + hora
@@ -34,12 +30,11 @@ def get_day():
     hora = request.form.get("hora")
     resp = server.get_day_data(fecha, hora)
     realvalues = server.get_real_values_day(fecha, hora)
-    pred = requests.post('http://localhost:8601/v1/models/prueba_model/versions/2:predict', json=resp)
+    pred = requests.post('http://pvpc-serving:8501/v1/models/modelday/versions/1:predict', json=resp)
     pred_json = pred.json().get("predictions")
     
     predvalues = []
     for i in range(0, len(pred_json[0])):
-        
         predvalue = server.normalize(pred_json[0][i])
         predvalues.append(predvalue)
     
@@ -48,7 +43,20 @@ def get_day():
 
 @app.route('/week', methods=['GET','POST'])
 def get_week():
-    return render_template("inicio.html")
+    fecha = request.form.get("fecha")
+    hora = request.form.get("hora")
+    resp = server.get_week_data(fecha, hora)
+    realvalues = server.get_real_values_week(fecha, hora)
+    pred = requests.post('http://pvpc-serving:8501/v1/models/modelweek/versions/1:predict', json=resp)
+    pred_json = pred.json().get("predictions")
+    
+    predvalues = []
+    for i in range(0, len(pred_json[0])):
+        predvalue = server.normalize(pred_json[0][i])
+        predvalues.append(predvalue)
+    
+    fechashow = fecha + " " + hora
+    return render_template("semana.html", realvalues = list(realvalues), predvalues = list(predvalues), fechashow = fechashow, error = "Fecha incorrecta", len = len(list(realvalues)))
 
 @app.errorhandler(500)
 def internal_server_error(e):
@@ -56,4 +64,4 @@ def internal_server_error(e):
     return render_template('inicio.html', error = "Fecha invalida")
 
 if __name__ == "__main__":
-    app.run(port=5001)
+    app.run(host = "0.0.0.0", port = 5001)

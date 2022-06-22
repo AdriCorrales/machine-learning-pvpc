@@ -8,11 +8,6 @@ df = pd.read_csv("data/csvdata2022.csv", sep = ",")
 mean = 219.2320209723546
 std = 73.79958332698291
 
-#mean = 72.00158769425943
-#std = 61.382440401330285
-#mean = 141.11900799825293
-#std = 86.89524236480287
-
 def get_input(fechas):
     resp = []
     for row in fechas.index:
@@ -58,7 +53,6 @@ def get_real_values_day(fecha, hora):
     fecha_timestamp = fecha_parse(fecha, hora)
     row_value = df.loc[df['date'] == fecha_timestamp]
     row_value_index = row_value.index[0]
-    print(row_value_index)
     fechas = df.iloc[row_value_index:(row_value_index + 24)]
     res = []
 
@@ -87,7 +81,7 @@ def get_hour_data(fecha, hora):
     fecha_find_index = fecha_find.index[0]
     fechas_input = df.iloc[fecha_find_index - 3:fecha_find_index]
     #Montamos la entrada
-    response = get_input(fechas_input) 
+    response = get_input(fechas_input)
     # Tengo que obtener la predicción 
     return response
 
@@ -98,13 +92,12 @@ def get_day_data(fecha, hora):
     fechas_input = df.iloc[(fecha_find_index - 24 * 7):fecha_find_index]
     
     #Montamos la entrada
-    response = get_input(fechas_input) 
+    response = get_input(fechas_input)
     # Tengo que obtener la predicción 
     return response
 
-def get_week_data():
-    fecha = request.json['fecha']
-    fecha_timestamp = fecha_parse(fecha)
+def get_week_data(fecha, hora):
+    fecha_timestamp = fecha_parse(fecha, hora)
     fecha_find = df.loc[df['date'] == fecha_timestamp]
     fecha_find_index = fecha_find.index[0]
     fechas_input = df.iloc[(fecha_find_index - 24 * 7 * 3):fecha_find_index]

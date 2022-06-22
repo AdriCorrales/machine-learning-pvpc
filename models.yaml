@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pvpc-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pvpc-serving
+  template:
+    metadata:
+      labels:
+        app: pvpc-serving
+    spec:
+      containers:
+      - name: pvpc-serving
+        image: adricorrales/pvpc:pvpc_serving
+        ports:
+        - containerPort: 8501
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pvpc-serving
+spec:
+  ports:
+  - port: 8501
+    targetPort: 8501
+  selector:
+    app: pvpc-serving
+  type: NodePort
